@@ -185,4 +185,4 @@ curl -X PUT "http://magetitans2015.dev/rest/V1/magetitans/product/status/<SKU>>"
     -H "content-type:application/json" \
     -H "Authorization: Bearer <TOKEN>>" \
     -d'{"status":"enabled"}'
-```
+``sadfadsfsdafdsafsd`
