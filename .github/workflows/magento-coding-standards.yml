@@ -17,12 +17,14 @@ jobs:
       - name: Install eslint
         run: |
           yarn global add eslint
+
       - name: Fetch Magento 2.3 eslint rules
         run: |
           wget https://raw.githubusercontent.com/magento/magento2/2.3/dev/tests/static/testsuite/Magento/Test/Js/_files/eslint/.eslintrc-magento \
             --no-clobber \
             --output-document=.eslintrc 
             # DOES NOT OVERWRITE an existing .eslintrc file
+
       - name: Run eslint
         run: |
           ~/.config/yarn/global/node_modules/.bin/eslint --no-error-on-unmatched-pattern .
@@ -33,6 +35,7 @@ jobs:
           # IGNORING FILES FROM CHECKS. To ignore certain files and folders from checks
           # you can include a .eslintignore file in the root of the repository.
           # See http://archive.ph/Ejtsj#eslintignore
+
   phpcs:
     name: PHP CodeSniffer
     runs-on: ubuntu-latest
@@ -55,9 +58,11 @@ jobs:
           #
           # CANNOT JUST COPY THE RULESET as the coding standard uses additional code
           # for it's tweaked *Sniffs and DocBlock comments validation.
+
       - name: Run PHP CodeSniffer
         run: |
           ~/.composer/vendor/bin/phpcs --standard=Magento2 .
+
   phpunit:
     name: PHPUnit
     runs-on: ubuntu-latest
@@ -112,6 +117,7 @@ jobs:
           # MAGENTO NEEDS TO BE INSTALLED IN ORDER TO RUN TESTS, as the dev/tests
           # is created during the installation step. We need that folder for their
           # phpunit.xml.dist definition
+
       - name: Detect module name
         run: |
           sudo apt install -y	libxml2-utils
@@ -122,6 +128,7 @@ jobs:
           # USE XMLLINT TO EXTRACT THE FULL MODULE NAME, that has the format
           # vendor_name. In the cut commands we split the string up by the '_'
           # delimiter and return the individual module name parts
+
       - name: Register Magento2 module
         env:
           FULL_NAME: ${{ env.FULL_NAME }}
@@ -130,9 +137,10 @@ jobs:
         run: |
           cd ..
           mkdir --parents magento/app/code/$VENDOR
-          ln -s `pwd`/magento2-unit-test-tutorial magento/app/code/$VENDOR/$MODULE
+          ln -s $GITHUB_WORKSPACE magento/app/code/$VENDOR/$MODULE
           cd magento
           php bin/magento module:enable $FULL_NAME
+
       - name: Run unit tests (and optionally install composer dependencies)
         env:
           VENDOR: ${{ env.VENDOR }}
@@ -140,5 +148,5 @@ jobs:
         run: |
           [ -f composer.json ] && composer install
           cd ../magento
-          ./vendor/bin/phpunit -c dev/tests/unit/phpunit.xml.dist app/code/$VENDOR/$MODULE/Test/Unit
+          ./vendor/bin/phpunit -c dev/tests/unit/phpunit.xml.dist app/code/$VENDOR/$MODULE/Test/Unit/
           # See http://archive.ph/TbQYe#running-only-a-subset-of-the-unit-tests
